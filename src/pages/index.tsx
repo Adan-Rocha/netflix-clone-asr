@@ -10,6 +10,7 @@ import useAuth from "../hooks/useAuth";
 import { useRecoilValue } from "recoil";
 import { modalState } from "../recoils_atoms/modalAtom";
 import Modal from "../components/Modal";
+import { title } from "process";
 
 interface Props {
   netflixOriginals: Movie[];
