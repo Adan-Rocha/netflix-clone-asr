@@ -1,18 +1,23 @@
-import Image from 'next/image'
-import React from 'react'
-import { Movie } from '../../typings'
+import Image from "next/image";
+import React from "react";
+import { useRecoilState } from "recoil";
+import { Movie } from "../../typings";
+import { modalState, movieState } from "../recoils_atoms/modalAtom";
 
 interface props {
-  movie:Movie
+  movie: Movie;
 }
 
-function Thumbail({movie}:props) {
+export function Thumbnail({ movie }: props) {
+  const [showModal, setShowModal] = useRecoilState(modalState);
+  const [currentMovie, setCurrentMovie] = useRecoilState(movieState);
+
   return (
     <div
       className={`relative h-28 min-w-[180px] cursor-pointer transition duration-200 ease-out md:h-36 md:min-w-[260px] md:hover:scale-105`}
       onClick={() => {
-        // setCurrentMovie(movie)
-        // setShowModal(true)
+        setShowModal(true);
+        setCurrentMovie(movie);
       }}
     >
       <Image
@@ -21,10 +26,8 @@ function Thumbail({movie}:props) {
         }`}
         className="rounded-sm object-cover md:rounded"
         layout="fill"
-        alt=''
+        alt=""
       />
     </div>
-  )
+  );
 }
-
-export default Thumbail

@@ -1,25 +1,28 @@
-import Head from 'next/head'
-import React from 'react'
-import type {NextPage} from 'next'
-import Header from '../components/header'
-import Banner from '../components/banner'
-import requests from '../utils/requests'
-import { Movie } from '../../typings'
-import Row from '../components/row'
+import Head from "next/head";
+import React from "react";
+import type { NextPage } from "next";
+import Header from "../components/header";
+import Banner from "../components/banner";
+import requests from "../utils/requests";
+import { Movie } from "../../typings";
+import Row from "../components/row";
+import useAuth from "../hooks/useAuth";
+import { useRecoilValue } from "recoil";
+import { modalState } from "../recoils_atoms/modalAtom";
+import Modal from "../components/Modal";
 
 interface Props {
-  netflixOriginals: Movie[]
-  trendingNow: Movie[]
-  topRated: Movie[]
-  actionMovies: Movie[]
-  comedyMovies: Movie[]
-  horrorMovies: Movie[]
-  romanceMovies: Movie[]
-  documentaries: Movie[] 
+  netflixOriginals: Movie[];
+  trendingNow: Movie[];
+  topRated: Movie[];
+  actionMovies: Movie[];
+  comedyMovies: Movie[];
+  horrorMovies: Movie[];
+  romanceMovies: Movie[];
+  documentaries: Movie[];
 }
 
-
-const Home =  ({
+const Home = ({
   netflixOriginals,
   actionMovies,
   comedyMovies,
@@ -27,21 +30,23 @@ const Home =  ({
   horrorMovies,
   romanceMovies,
   topRated,
-  trendingNow, 
+  trendingNow
 }: Props) => {
+  const { loading } = useAuth();
 
+  if (loading) return null;
 
-  
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const showModal = useRecoilValue(modalState);
+
   return (
-    <div className='relative h-screen bg-gradient-to-b from-gray-900/10 to-[#010511] lg:h-[140vh]'> 
+    <div className="relative h-screen bg-gradient-to-b from-gray-900/10 to-[#010511] lg:h-[140vh]">
       <Head>
         <title>Home - Netflix</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-
-      <Header/>
-
+      <Header />
 
       <main className="relative pl-4 pb-24 lg:space-y-24 lg:pl-16">
         <Banner netflixOriginals={netflixOriginals} />
@@ -53,21 +58,18 @@ const Home =  ({
           <Row title="Comedies" movies={comedyMovies} />
           <Row title="Scary Movies" movies={horrorMovies} />
           <Row title="Romance Movies" movies={romanceMovies} />
-          <Row title="Documentaries" movies={documentaries} />     
+          <Row title="Documentaries" movies={documentaries} />
         </section>
 
-        {/* modal */}
+        {showModal && <Modal />}
       </main>
-
     </div>
-  )
-}
+  );
+};
 
-
-export default Home
+export default Home;
 
 export const getServerSideProps = async () => {
-
   const [
     netflixOriginals,
     trendingNow,
@@ -76,7 +78,7 @@ export const getServerSideProps = async () => {
     comedyMovies,
     horrorMovies,
     romanceMovies,
-    documentaries,
+    documentaries
   ] = await Promise.all([
     fetch(requests.fetchNetflixOriginals).then((res) => res.json()),
     fetch(requests.fetchTrending).then((res) => res.json()),
@@ -85,8 +87,8 @@ export const getServerSideProps = async () => {
     fetch(requests.fetchComedyMovies).then((res) => res.json()),
     fetch(requests.fetchHorrorMovies).then((res) => res.json()),
     fetch(requests.fetchRomanceMovies).then((res) => res.json()),
-    fetch(requests.fetchDocumentaries).then((res) => res.json()),
-  ])
+    fetch(requests.fetchDocumentaries).then((res) => res.json())
+  ]);
 
   return {
     props: {
@@ -97,8 +99,7 @@ export const getServerSideProps = async () => {
       comedyMovies: comedyMovies.results,
       horrorMovies: horrorMovies.results,
       romanceMovies: romanceMovies.results,
-      documentaries: documentaries.results,
-    },
-  }
-
-}
+      documentaries: documentaries.results
+    }
+  };
+};
