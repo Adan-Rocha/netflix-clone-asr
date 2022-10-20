@@ -15,14 +15,36 @@ import {
 } from "@heroicons/react/outline";
 import toast, { Toaster } from "react-hot-toast";
 import { ThumbUp } from "@mui/icons-material";
+import useAuth from "../hooks/useAuth";
+import {
+  DocumentData,
+  onSnapshot,
+  collection,
+  deleteDoc,
+  doc,
+  setDoc
+} from "firebase/firestore";
+// import { db } from "../../firebase";
 
 function Modal() {
   const [movie, setMovie] = useRecoilState(movieState);
   const [trailer, setTrailer] = useState("");
-  const [genres, setGenres] = useState<Genre[]>([]);
   const [showModal, setShowModal] = useRecoilState(modalState);
-  const [data, setData] = useState();
-  const [muted, setMuted] = useState(false);
+  const [muted, setMuted] = useState(true);
+  const [genres, setGenres] = useState<Genre[]>([]);
+  const [addedToList, setAddedToList] = useState(false);
+  const { user } = useAuth();
+  const [movies, setMovies] = useState<DocumentData[] | Movie[]>([]);
+
+  const toastStyle = {
+    background: "white",
+    color: "black",
+    fontWeight: "bold",
+    fontSize: "16px",
+    padding: "15px",
+    borderRadius: "9999px",
+    maxWidth: "1000px"
+  };
 
   useEffect(() => {
     if (!movie) return;
@@ -38,8 +60,6 @@ function Modal() {
         .then((response) => response.json())
         .catch((err) => console.log(err.message));
 
-      setData(data);
-
       if (data?.videos) {
         const index = data.videos.results.findIndex(
           (element: Element) => element.type === "Trailer"
@@ -54,20 +74,67 @@ function Modal() {
     fetchMovie();
   }, [movie]);
 
-  console.log(trailer);
-
-  // useEffect(() => {}, []);
-  // useEffect(() => {}, []);
-
   const handleClose = () => {
     setShowModal(false);
     setMovie(null);
+    toast.dismiss();
   };
+
+  // Find all the movies in the user's list
+  // useEffect(() => {
+  //   if (user) {
+  //     return onSnapshot(
+  //       collection(db, "customers", user.uid, "myList"),
+  //       (snapshot) => setMovies(snapshot.docs)
+  //     );
+  //   }
+  // }, [db, movie?.id]);
+
+  // Check if the movie is already in the user's list
+  useEffect(
+    () =>
+      setAddedToList(
+        movies.findIndex((result) => result.data().id === movie?.id) !== -1
+      ),
+    [movies]
+  );
+
+  // const handleList = async () => {
+  //   if (addedToList) {
+  //     await deleteDoc(
+  //       doc(db, "customers", user!.uid, "myList", movie?.id.toString()!)
+  //     );
+
+  //     toast(
+  //       `${movie?.title || movie?.original_name} has been removed from My List`,
+  //       {
+  //         duration: 8000,
+  //         style: toastStyle
+  //       }
+  //     );
+  //   } else {
+  //     await setDoc(
+  //       doc(db, "customers", user!.uid, "myList", movie?.id.toString()!),
+  //       {
+  //         ...movie
+  //       }
+  //     );
+
+  //     toast(
+  //       `${movie?.title || movie?.original_name} has been added to My List.`,
+  //       {
+  //         duration: 8000,
+  //         style: toastStyle
+  //       }
+  //     );
+  //   }
+  // };
+
   return (
     <MuiModal
       open={showModal}
       onClose={handleClose}
-      className="fixed !top-7 left-0 right-0  z-50 mx-auto w-full max-w-5xl overflow-hidden overflow-y-scroll rounded-md scrollbar-hide"
+      className="fixed !top-7 left-0 right-0 z-50  mx-auto mb-4 w-full max-w-5xl overflow-hidden overflow-y-scroll rounded-md scrollbar-hide"
     >
       <>
         <button
@@ -113,7 +180,7 @@ function Modal() {
           </div>
         </div>
 
-        <div className="py-16">
+        <div className="flex space-x-16 rounded-b-md bg-[#181818] py-16 px-10">
           <div>
             <div className="flex items-center space-x-2 px-1 text-sm">
               <p className="font-semibold text-green-400">
