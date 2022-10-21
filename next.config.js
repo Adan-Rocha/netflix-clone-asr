@@ -1,11 +1,19 @@
-const withTM = require('next-transpile-modules')([
-  '@stripe/firestore-stripe-payments',
-]) // pass the modules you would like to see transpiled
-
-module.exports = withTM({
+module.exports = {
   reactStrictMode: true,
   images: {
     dangerouslyAllowSVG: true,
-    domains: ['rb.gy', 'image.tmdb.org'],
-  },
-})
+    domains: ["rb.gy", "image.tmdb.org"]
+  }
+  // webpack: (config) => {
+  //   config.resolve = {
+  //     ...config.resolve,
+  //     fallback: {
+  //       fs: false,
+  //       path: false,
+  //       os: false
+  //     }
+  //   };
+
+  //   return config;
+  // }
+};

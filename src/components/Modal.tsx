@@ -15,8 +15,8 @@ import {
 } from "@heroicons/react/outline";
 import toast, { Toaster } from "react-hot-toast";
 import { ThumbUp } from "@mui/icons-material";
-import useAuth from "../hooks/useAuth";
 import {
+  getFirestore,
   DocumentData,
   onSnapshot,
   collection,
@@ -24,7 +24,11 @@ import {
   doc,
   setDoc
 } from "firebase/firestore";
-// import { db } from "../../firebase";
+import firebaseApp from "../../firebase";
+import useAuth from "../hooks/useAuth";
+
+const db = getFirestore(firebaseApp);
+const postRef = collection(db, "customers");
 
 function Modal() {
   const [movie, setMovie] = useRecoilState(movieState);
@@ -81,14 +85,14 @@ function Modal() {
   };
 
   // Find all the movies in the user's list
-  // useEffect(() => {
-  //   if (user) {
-  //     return onSnapshot(
-  //       collection(db, "customers", user.uid, "myList"),
-  //       (snapshot) => setMovies(snapshot.docs)
-  //     );
-  //   }
-  // }, [db, movie?.id]);
+  useEffect(() => {
+    if (user) {
+      return onSnapshot(
+        collection(db, "customers", user.uid, "myList"),
+        (snapshot) => setMovies(snapshot.docs)
+      );
+    }
+  }, [db, movie?.id]);
 
   // Check if the movie is already in the user's list
   useEffect(
@@ -99,36 +103,36 @@ function Modal() {
     [movies]
   );
 
-  // const handleList = async () => {
-  //   if (addedToList) {
-  //     await deleteDoc(
-  //       doc(db, "customers", user!.uid, "myList", movie?.id.toString()!)
-  //     );
+  const handleList = async () => {
+    if (addedToList) {
+      await deleteDoc(
+        doc(db, "customers", user!.uid, "myList", movie?.id.toString()!)
+      );
 
-  //     toast(
-  //       `${movie?.title || movie?.original_name} has been removed from My List`,
-  //       {
-  //         duration: 8000,
-  //         style: toastStyle
-  //       }
-  //     );
-  //   } else {
-  //     await setDoc(
-  //       doc(db, "customers", user!.uid, "myList", movie?.id.toString()!),
-  //       {
-  //         ...movie
-  //       }
-  //     );
+      toast(
+        `${movie?.title || movie?.original_name} has been removed from My List`,
+        {
+          duration: 8000,
+          style: toastStyle
+        }
+      );
+    } else {
+      await setDoc(
+        doc(db, "customers", user!.uid, "myList", movie?.id.toString()!),
+        {
+          ...movie
+        }
+      );
 
-  //     toast(
-  //       `${movie?.title || movie?.original_name} has been added to My List.`,
-  //       {
-  //         duration: 8000,
-  //         style: toastStyle
-  //       }
-  //     );
-  //   }
-  // };
+      toast(
+        `${movie?.title || movie?.original_name} has been added to My List.`,
+        {
+          duration: 8000,
+          style: toastStyle
+        }
+      );
+    }
+  };
 
   return (
     <MuiModal
@@ -161,8 +165,12 @@ function Modal() {
                 Play
               </button>
 
-              <button className="modalButton">
-                <PlusIcon className="h-7 w-7" />
+              <button className="modalButton" onClick={handleList}>
+                {addedToList ? (
+                  <CheckIcon className="h-7 w-7" />
+                ) : (
+                  <PlusIcon className="h-7 w-7" />
+                )}
               </button>
 
               <button className="modalButton">
