@@ -32,3 +32,5 @@ export function Thumbnail({ movie }: props) {
     </div>
   );
 }
+
+export default Thumbnail;

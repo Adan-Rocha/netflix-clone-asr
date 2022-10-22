@@ -16,10 +16,7 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
 };
 
-// Initialize Firebase
 
-// const app = initializeApp(firebaseConfig);
-// console.log(getApps());
 // create a new app only if it doesn't already exists
 const firebaseApp =  getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 // const db = getFirestore(firebaseApp);

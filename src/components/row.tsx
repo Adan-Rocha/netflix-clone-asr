@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { Movie } from "../../typings";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/outline";
-import { Thumbnail } from "./Thumbail";
+import Thumbnail from "./Thumbnail";
 import React from "react";
 import { DocumentData } from "@firebase/firestore";
 
@@ -18,9 +18,6 @@ function Row({ title, movies }: Props) {
     setIsMoved(true);
     if (rowRef.current) {
       const { scrollLeft, clientWidth } = rowRef.current;
-      console.log(scrollLeft);
-      console.log(scrollLeft);
-
       const scrollTo =
         direction === "left"
           ? scrollLeft - clientWidth

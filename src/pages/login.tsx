@@ -27,8 +27,6 @@ function Login() {
   } = useForm<Inputs>();
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    console.log(data);
-
     if (login) {
       // router.push("/");
       await signIn(data.email, data.password);
