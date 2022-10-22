@@ -1,6 +1,5 @@
 import Head from "next/head";
 import React from "react";
-import type { NextPage } from "next";
 import Header from "../components/Header";
 import Banner from "../components/Banner";
 import requests from "../utils/requests";
@@ -10,8 +9,6 @@ import useAuth from "../hooks/useAuth";
 import { useRecoilValue } from "recoil";
 import { modalState, movieState } from "../recoils_atoms/modalAtom";
 import Modal from "../components/Modal";
-import Plans from "../components/Plans";
-import firebaseApp from "../../firebase";
 import useList from "../hooks/useList";
 
 interface Props {

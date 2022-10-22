@@ -2,7 +2,6 @@ import Image from "next/image";
 import NextflixLogo_img from "../public/assets/Netflix_logo.svg";
 import KidsIcon_img from "../public/assets/Kids_Icon.png";
 import { SearchIcon, BellIcon } from "@heroicons/react/solid";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import useAuth from "../hooks/useAuth";
 
