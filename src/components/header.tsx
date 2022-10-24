@@ -57,7 +57,6 @@ function Header() {
           alt=""
           className="cursor-pointer rounded"
         />
-        {/* lg:max-w-2xl lg:text-2xl</Link> */}
       </div>
     </header>
   );
